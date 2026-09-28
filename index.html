@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nukkad Chai | Kulhad chai, made when you order</title>
+<meta name="description" content="Slow-boiled masala chai served in a fresh clay kulhad. See the menu and order on WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Yatra+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --deep:#0a1f21;
+    --paper:#f4ecdc;
+    --marigold:#f2b632;
+    --mist:#9fbab6;
+    --ink:#1a1204;
+    --pad:clamp(1.25rem,6vw,5rem);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--deep);
+    color:var(--paper);
+    font-family:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+    font-size:1.05rem;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  body.no-gl{background:radial-gradient(circle at 75% 40%,#1d5257 0%,var(--deep) 60%)}
+  body.no-gl #gl,body.no-gl .vig{display:none}
+
+  #gl{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
+  .vig{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(ellipse at 50% 45%,transparent 45%,rgba(4,14,16,.6) 100%);
+  }
+
+  a{color:inherit}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--marigold);outline-offset:3px;border-radius:4px}
+
+  /* header */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:5;
+    display:flex;align-items:center;justify-content:space-between;gap:1rem;
+    padding:1rem var(--pad);
+  }
+  .brand{font-family:'Yatra One',Georgia,serif;font-size:1.45rem;text-decoration:none;letter-spacing:.01em}
+  nav{display:flex;align-items:center;gap:1.75rem;font-weight:500;font-size:.98rem}
+  nav a{text-decoration:none;color:var(--paper);opacity:.85}
+  nav a:hover{opacity:1}
+  nav a.pill{
+    opacity:1;background:var(--marigold);color:var(--ink);
+    padding:.5rem 1.05rem;border-radius:999px;font-weight:600;
+  }
+
+  /* layout */
+  main{position:relative;z-index:2}
+  section{
+    min-height:100vh;min-height:100svh;
+    display:flex;align-items:center;
+    padding:6.5rem var(--pad) 4rem;
+  }
+  .left{justify-content:flex-start}
+  .right{justify-content:flex-end}
+  .panel{width:100%;max-width:31rem}
+  .panel.wide{max-width:34rem}
+
+  h1,h2{font-family:'Yatra One',Georgia,serif;font-weight:400;line-height:1.08}
+  h1{font-size:clamp(2.9rem,7.4vw,5.6rem);margin-bottom:1.25rem}
+  h2{font-size:clamp(2.1rem,4.6vw,3.3rem);margin-bottom:1.1rem}
+  p.lead{font-size:1.15rem;color:var(--paper);opacity:.92;max-width:27rem}
+
+  .actions{display:flex;flex-wrap:wrap;align-items:center;gap:1.25rem;margin-top:2rem}
+  .btn{
+    display:inline-block;background:var(--marigold);color:var(--ink);
+    font-weight:600;text-decoration:none;
+    padding:.85rem 1.5rem;border-radius:999px;
+    transition:transform .2s ease,box-shadow .2s ease;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(242,182,50,.28)}
+  .textlink{font-weight:500;text-decoration:underline;text-underline-offset:.3em;text-decoration-thickness:1px}
+
+  /* menu */
+  .group + .group{margin-top:2rem}
+  .group h3{font-size:1.05rem;font-weight:600;color:var(--mist);margin-bottom:.35rem}
+  .items{list-style:none}
+  .items li{
+    display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
+    padding:.8rem 0;border-bottom:1px dashed rgba(244,236,220,.22);
+  }
+  .items b{font-weight:600;display:block}
+  .items span{display:block;font-size:.93rem;color:var(--mist);line-height:1.4}
+  .items em{
+    font-style:normal;font-weight:600;color:var(--marigold);
+    font-variant-numeric:tabular-nums;white-space:nowrap;
+  }
+  .note{margin-top:1.5rem;font-size:.95rem;color:var(--mist)}
+
+  /* steps */
+  ol.steps{list-style:none;counter-reset:s;margin-top:1.5rem}
+  ol.steps li{
+    counter-increment:s;display:grid;grid-template-columns:2.6rem 1fr;gap:.75rem;
+    padding:.9rem 0;border-bottom:1px dashed rgba(244,236,220,.22);
+  }
+  ol.steps li::before{
+    content:counter(s);font-family:'Yatra One',Georgia,serif;
+    font-size:1.9rem;line-height:1;color:var(--marigold);
+  }
+
+  /* visit */
+  dl.info{display:grid;grid-template-columns:auto 1fr;gap:.55rem 1.5rem;margin-top:1.25rem}
+  dl.info dt{color:var(--mist);font-weight:500}
+  dl.info dd{font-weight:500}
+  footer.credit{margin-top:3rem;font-size:.9rem;color:var(--mist)}
+
+  /* one entrance moment, timed with the kulhad landing */
+  .rise{animation:rise .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:.75s}
+  .rise.d2{animation-delay:.9s}
+  .rise.d3{animation-delay:1.05s}
+  .rise.d4{animation-delay:1.2s}
+  @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+  @media (max-width:760px){
+    nav a:not(.pill){display:none}
+    nav a.pill{padding:.45rem .95rem;font-size:.92rem}
+    section{align-items:flex-start;padding-top:56vh;padding-top:56svh;padding-bottom:3rem}
+    #hero{padding-top:6rem}
+    .panel{
+      background:rgba(7,25,27,.82);
+      -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+      padding:1.4rem 1.25rem;border-radius:16px;
+    }
+    #hero .panel{background:none;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0}
+    h1{font-size:2.9rem}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .rise{animation:none}
+    .btn{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="vig" aria-hidden="true"></div>
+
+<header>
+  <a class="brand" href="#hero">नुक्कड़ चाय</a>
+  <nav>
+    <a href="#menu">Menu</a>
+    <a href="#brew">How we make it</a>
+    <a href="#visit">Visit</a>
+    <a class="pill" href="https://wa.me/919999999999?text=Hi%2C%20I%27d%20like%20to%20order%20chai." target="_blank" rel="noopener">Order</a>
+  </nav>
+</header>
+
+<main>
+  <section id="hero" class="left">
+    <div class="panel">
+      <h1 class="rise">Chai, poured into clay.</h1>
+      <p class="lead rise d2">Ginger, cardamom and a slow boil, served in a fresh kulhad at the nukkad. Every cup is made when you order it.</p>
+      <div class="actions rise d3">
+        <a class="btn" href="#menu">See the menu</a>
+        <a class="textlink" href="https://wa.me/919999999999?text=Hi%2C%20I%27d%20like%20to%20order%20chai." target="_blank" rel="noopener">Order on WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="menu" class="right">
+    <div class="panel wide">
+      <h2>What's on the stove</h2>
+      <div class="group">
+        <h3>Chai</h3>
+        <ul class="items">
+          <li><div><b>Masala chai</b><span>Ginger, cardamom, black pepper</span></div><em>₹20</em></li>
+          <li><div><b>Adrak elaichi</b><span>Extra ginger, for cold mornings</span></div><em>₹25</em></li>
+          <li><div><b>Tulsi chai</b><span>Holy basil, less sweet</span></div><em>₹30</em></li>
+          <li><div><b>Kesar chai</b><span>Saffron, boiled slow and low</span></div><em>₹40</em></li>
+        </ul>
+      </div>
+      <div class="group">
+        <h3>With your chai</h3>
+        <ul class="items">
+          <li><div><b>Bun maska</b><span>Soft bun, butter, a pinch of sugar</span></div><em>₹35</em></li>
+          <li><div><b>Samosa, 2 pieces</b><span>Fried fresh, with green chutney</span></div><em>₹30</em></li>
+          <li><div><b>Masala poha</b><span>Peanuts, curry leaves, lemon</span></div><em>₹40</em></li>
+        </ul>
+      </div>
+      <p class="note">Vegan? Ask for soy milk in any chai (+₹15).</p>
+    </div>
+  </section>
+
+  <section id="brew" class="left">
+    <div class="panel">
+      <h2>Five minutes on the flame</h2>
+      <p class="lead">No premix, no machine. Each pot is made the same way, in this order.</p>
+      <ol class="steps">
+        <li><span>Crush fresh ginger and cardamom.</span></li>
+        <li><span>Boil water with tea leaves until it turns dark.</span></li>
+        <li><span>Add milk and sugar. Simmer until it rises twice.</span></li>
+        <li><span>Pour from a height into the kulhad, so it cools a little and foams.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="visit" class="right">
+    <div class="panel">
+      <h2>Find us at the nukkad</h2>
+      <p class="lead">Stand, sip, hand the kulhad back. It goes into the soil, not the bin.</p>
+      <dl class="info">
+        <dt>Address</dt><dd>Shop 12, Station Road</dd>
+        <dt>Hours</dt><dd>6 am to 11 pm, every day</dd>
+        <dt>Phone</dt><dd>+91 99999 99999</dd>
+      </dl>
+      <div class="actions">
+        <a class="btn" href="https://wa.me/919999999999?text=Hi%2C%20I%27d%20like%20to%20order%20chai." target="_blank" rel="noopener">Order on WhatsApp</a>
+      </div>
+      <footer class="credit">Demo website by Lumio Studio.</footer>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  if(!window.THREE){document.body.classList.add('no-gl');return;}
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var canvas = document.getElementById('gl');
+  var renderer;
+  try{
+    renderer = new THREE.WebGLRenderer({canvas:canvas,antialias:true,powerPreference:'high-performance'});
+  }catch(e){
+    document.body.classList.add('no-gl');return;
+  }
+
+  var BG = 0x0a1f21;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  var scene = new THREE.Scene();
+  scene.background = new THREE.Color(BG);
+  scene.fog = new THREE.FogExp2(BG,0.05);
+
+  var camera = new THREE.PerspectiveCamera(32,1,0.1,60);
+
+  /* ---------- reflections: a tiny studio built from light panels ---------- */
+  var envScene = new THREE.Scene();
+  envScene.background = new THREE.Color(0x0a1f21);
+  function panel(w,h,col,power,pos){
+    var m = new THREE.Mesh(
+      new THREE.PlaneGeometry(w,h),
+      new THREE.MeshBasicMaterial({color:new THREE.Color(col).multiplyScalar(power),side:THREE.DoubleSide})
+    );
+    m.position.set(pos[0],pos[1],pos[2]);
+    m.lookAt(0,0,0);
+    envScene.add(m);
+  }
+  panel(8,6,0xffc27a,6,[-6,6,5]);     // warm stall bulb
+  panel(6,10,0x4fd0c8,2.2,[7,3,-5]);  // cool teal rim
+  panel(14,3,0xfff0d8,1.2,[0,9,0]);   // soft top
+  panel(10,10,0x2b1a10,0.6,[0,-6,0]); // warm bounce from below
+  var pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(envScene,0.03).texture;
+
+  /* ---------- lights ---------- */
+  var key = new THREE.SpotLight(0xffd7a0,1.7,0,0.55,0.8,1);
+  key.castShadow = true;
+  key.shadow.mapSize.set(2048,2048);
+  key.shadow.bias = -0.0005;
+  key.shadow.normalBias = 0.02;
+  key.shadow.camera.near = 2;
+  key.shadow.camera.far = 16;
+  scene.add(key);
+  scene.add(key.target);
+
+  var rim = new THREE.DirectionalLight(0x66e0d6,0.9);
+  rim.position.set(4,3,-4);
+  scene.add(rim);
+  scene.add(new THREE.HemisphereLight(0x9fd4d0,0x1a0f08,0.25));
+
+  /* ---------- ground ---------- */
+  var ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(40,40),
+    new THREE.MeshStandardMaterial({color:0x143a3d,roughness:0.5,metalness:0.15,envMapIntensity:0.45})
+  );
+  ground.rotation.x = -Math.PI/2;
+  ground.position.y = -0.001;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  /* ---------- procedural clay texture ---------- */
+  var maxAniso = renderer.capabilities.getMaxAnisotropy();
+  function makeClay(){
+    var W=1024,H=1024,c=document.createElement('canvas');
+    c.width=W;c.height=H;
+    var g=c.getContext('2d');
+    g.fillStyle='#92502f';g.fillRect(0,0,W,H);
+    var i,dx;
+    // slow colour mottling, wrapped so the seam disappears
+    for(i=0;i<70;i++){
+      var x=Math.random()*W,y=Math.random()*H,r=40+Math.random()*120;
+      var dark=Math.random()<0.5;
+      var gr=g.createRadialGradient(x,y,0,x,y,r);
+      gr.addColorStop(0,dark?'rgba(60,25,10,.18)':'rgba(200,120,70,.16)');
+      gr.addColorStop(1,'rgba(0,0,0,0)');
+      g.fillStyle=gr;
+      [-W,0,W].forEach(function(o){
+        g.save();g.translate(o,0);g.fillRect(x-r,y-r,r*2,r*2);g.restore();
+      });
+    }
+    // potter's wheel lines
+    for(var yy=0;yy<H;yy+=2+Math.random()*3){
+      g.fillStyle=Math.random()<0.5
+        ?'rgba(50,20,8,'+(0.05+Math.random()*0.1)+')'
+        :'rgba(230,160,110,'+(0.04+Math.random()*0.08)+')';
+      g.fillRect(0,yy,W,1+Math.random()*2);
+    }
+    // grit
+    for(i=0;i<12000;i++){
+      var sx=Math.random()*W,sy=Math.random()*H,sr=0.4+Math.random()*1.4;
+      g.fillStyle=Math.random()<0.55
+        ?'rgba(40,15,5,'+(0.25+Math.random()*0.35)+')'
+        :'rgba(235,190,150,'+(0.2+Math.random()*0.3)+')';
+      [-W,0,W].forEach(function(o){
+        g.beginPath();g.arc(sx+o,sy,sr,0,6.2832);g.fill();
+      });
+    }
+    return c;
+  }
+  var clayCanvas = makeClay();
+  var clayMap = new THREE.CanvasTexture(clayCanvas);
+  clayMap.encoding = THREE.sRGBEncoding;
+  var clayBump = new THREE.CanvasTexture(clayCanvas);
+  [clayMap,clayBump].forEach(function(t){
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(2,1.5);
+    t.anisotropy = maxAniso;
+  });
+
+  /* ---------- kulhad (lathe profile, then rounded off) ---------- */
+  function chaikin(pts,n){
+    for(var k=0;k<n;k++){
+      var out=[pts[0]];
+      for(var i=0;i<pts.length-1;i++){
+        var p=pts[i],q=pts[i+1];
+        out.push(new THREE.Vector2(p.x*0.75+q.x*0.25,p.y*0.75+q.y*0.25));
+        out.push(new THREE.Vector2(p.x*0.25+q.x*0.75,p.y*0.25+q.y*0.75));
+      }
+      out.push(pts[pts.length-1]);
+      pts=out;
+    }
+    return pts;
+  }
+  var profile = [
+    [0,0],[0.18,0],[0.3,0],[0.36,0.012],[0.41,0.07],[0.47,0.3],[0.55,0.62],[0.61,0.95],
+    [0.65,1.2],[0.655,1.262],[0.635,1.29],[0.605,1.29],[0.585,1.26],
+    [0.575,1.2],[0.52,0.9],[0.45,0.55],[0.38,0.25],[0.3,0.12],[0.15,0.1],[0,0.1]
+  ].map(function(p){return new THREE.Vector2(p[0],p[1]);});
+  var cupGeo = new THREE.LatheGeometry(chaikin(profile,3),128);
+  var cupMat = new THREE.MeshStandardMaterial({
+    map:clayMap,bumpMap:clayBump,bumpScale:0.003,
+    roughness:0.9,metalness:0,side:THREE.DoubleSide,envMapIntensity:0.55
+  });
+  var cup = new THREE.Mesh(cupGeo,cupMat);
+  cup.position.y = 0.05;
+  cup.castShadow = true;
+  cup.receiveShadow = true;
+
+  /* ---------- brass tray, spices ---------- */
+  var brass = new THREE.MeshStandardMaterial({color:0xc9a15a,metalness:1,roughness:0.32,envMapIntensity:1.1});
+  var tray = new THREE.Mesh(new THREE.CylinderGeometry(1.15,1.2,0.05,96),brass);
+  tray.position.y = 0.025;
+  tray.receiveShadow = true;
+  tray.castShadow = true;
+  var trayRim = new THREE.Mesh(new THREE.TorusGeometry(1.17,0.03,16,120),brass);
+  trayRim.rotation.x = Math.PI/2;
+  trayRim.position.y = 0.05;
+  trayRim.castShadow = true;
+
+  var spin = new THREE.Group();
+  spin.add(tray);spin.add(trayRim);spin.add(cup);
+
+  var podMat = new THREE.MeshStandardMaterial({color:0x8aa356,roughness:0.7,metalness:0});
+  [[0.88,0.55,0.3],[0.95,-0.35,-0.6],[-0.85,0.7,2.4]].forEach(function(a){
+    var pod = new THREE.Mesh(new THREE.SphereGeometry(0.06,20,14),podMat);
+    pod.scale.set(1,0.8,1.6);
+    pod.position.set(Math.cos(a[1])*a[0]*0.98,0.1,Math.sin(a[1])*a[0]*0.98);
+    pod.rotation.y = a[2];
+    pod.castShadow = true;
+    spin.add(pod);
+  });
+  var stick = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.03,0.03,0.55,16),
+    new THREE.MeshStandardMaterial({color:0x8b4a24,roughness:0.85})
+  );
+  stick.rotation.z = Math.PI/2;
+  stick.rotation.y = 0.5;
+  stick.position.set(-0.35,0.085,0.85);
+  stick.castShadow = true;
+  spin.add(stick);
+
+  var root = new THREE.Group();
+  root.add(spin);
+  scene.add(root);
+
+  /* ---------- chai surface (gently rippling) ---------- */
+  function radialTex(){
+    var c=document.createElement('canvas');c.width=c.height=256;
+    var g=c.getContext('2d');
+    var gr=g.createRadialGradient(128,128,10,128,128,128);
+    gr.addColorStop(0,'#b07238');
+    gr.addColorStop(0.6,'#7d4520');
+    gr.addColorStop(1,'#552b12');
+    g.fillStyle=gr;g.fillRect(0,0,256,256);
+    var t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;return t;
+  }
+  var liqGeo = new THREE.RingGeometry(0.001,0.55,72,18);
+  var liq = new THREE.Mesh(
+    liqGeo,
+    new THREE.MeshPhysicalMaterial({
+      map:radialTex(),roughness:0.08,metalness:0,
+      clearcoat:1,clearcoatRoughness:0.05,envMapIntensity:1.3
+    })
+  );
+  liq.rotation.x = -Math.PI/2;
+  liq.position.y = 1.08;
+  liq.receiveShadow = true;
+  root.add(liq);
+  var lp = liqGeo.attributes.position;
+  var lr = new Float32Array(lp.count);
+  for(var i=0;i<lp.count;i++){lr[i]=Math.hypot(lp.getX(i),lp.getY(i));}
+
+  /* ---------- steam ---------- */
+  function steamTex(){
+    var c=document.createElement('canvas');c.width=c.height=128;
+    var g=c.getContext('2d');
+    var gr=g.createRadialGradient(64,64,0,64,64,64);
+    gr.addColorStop(0,'rgba(255,255,255,.9)');
+    gr.addColorStop(0.45,'rgba(255,255,255,.35)');
+    gr.addColorStop(1,'rgba(255,255,255,0)');
+    g.fillStyle=gr;g.fillRect(0,0,128,128);
+    return new THREE.CanvasTexture(c);
+  }
+  var sTex = steamTex();
+  var puffs = [];
+  for(i=0;i<26;i++){
+    var sm = new THREE.SpriteMaterial({map:sTex,color:0xffefd8,transparent:true,opacity:0,depthWrite:false,fog:false});
+    var sp = new THREE.Sprite(sm);
+    root.add(sp);
+    puffs.push({s:sp,seed:Math.random()*100,t:i/26});
+  }
+
+  /* ---------- scroll choreography ---------- */
+  var KF_D = [
+    {x:1.25,y:0,ry:0.5, rz:0.05, rx:0,   s:1.4, camY:1.9,camZ:4.7,look:0.75},
+    {x:-1.3,y:0,ry:2.6, rz:-0.07,rx:0,   s:1.4, camY:1.5,camZ:4.5,look:0.7},
+    {x:1.2, y:0,ry:4.4, rz:0.08, rx:0.28,s:1.45,camY:3.2,camZ:4.2,look:0.55},
+    {x:-1.25,y:0,ry:6.78,rz:0,   rx:0,   s:1.3, camY:1.3,camZ:4.8,look:0.8}
+  ];
+  var KF_M = [
+    {x:0,y:0,ry:0.5, rz:0.05, rx:0,  s:1,camY:2.3,camZ:6.4,look:1.45},
+    {x:0,y:0,ry:2.6, rz:-0.06,rx:0,  s:1,camY:1.4,camZ:6.4,look:-0.1},
+    {x:0,y:0,ry:4.4, rz:0.06, rx:0.3,s:1,camY:2.6,camZ:6.0,look:0},
+    {x:0,y:0,ry:6.78,rz:0,    rx:0,  s:1,camY:1.4,camZ:6.4,look:-0.1}
+  ];
+  var KEYS = ['x','y','ry','rz','rx','s','camY','camZ','look'];
+
+  var secs = Array.prototype.slice.call(document.querySelectorAll('main section'));
+  var centers = [];
+  var isMobile = false;
+  var aspect = 1;
+
+  function measure(){
+    var sy = window.scrollY||window.pageYOffset;
+    centers = secs.map(function(s){
+      var r = s.getBoundingClientRect();
+      return r.top+sy+r.height/2;
+    });
+  }
+  function resize(){
+    var w = window.innerWidth,h = window.innerHeight;
+    isMobile = w<=760;
+    aspect = w/h;
+    renderer.setSize(w,h,false);
+    camera.aspect = aspect;
+    camera.updateProjectionMatrix();
+    measure();
+  }
+  function smooth(t){return t*t*(3-2*t);}
+  function target(){
+    var kf = isMobile?KF_M:KF_D;
+    var sy = window.scrollY||window.pageYOffset;
+    var m = sy+window.innerHeight*0.5;
+    var out = {},k,i;
+    var a,b,f=0;
+    if(m<=centers[0]){a=kf[0];b=kf[0];}
+    else if(m>=centers[centers.length-1]){a=kf[kf.length-1];b=a;}
+    else{
+      for(i=0;i<centers.length-1;i++){
+        if(m<centers[i+1]){
+          f = (m-centers[i])/(centers[i+1]-centers[i]);
+          f = smooth(Math.min(1,Math.max(0,(f-0.18)/0.64)));
+          a=kf[i];b=kf[i+1];break;
+        }
+      }
+    }
+    for(i=0;i<KEYS.length;i++){k=KEYS[i];out[k]=a[k]+(b[k]-a[k])*f;}
+    // keep the cup on-screen on narrower desktop windows
+    if(!isMobile){
+      var fit = Math.min(1,aspect/1.75);
+      out.x*=fit;
+      out.s*=0.6+0.4*fit;
+    }
+    return out;
+  }
+
+  var cur = null;
+  var px=0,py=0,pxs=0,pys=0;
+  window.addEventListener('pointermove',function(e){
+    if(e.pointerType!=='mouse')return;
+    px = e.clientX/window.innerWidth-0.5;
+    py = e.clientY/window.innerHeight-0.5;
+  },{passive:true});
+  window.addEventListener('resize',resize);
+  window.addEventListener('load',measure);
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(measure);}
+  if(window.ResizeObserver){new ResizeObserver(measure).observe(document.body);}
+
+  resize();
+  cur = target();
+
+  /* ---------- loop ---------- */
+  var clock = new THREE.Clock();
+  var time=0,idle=0,amp=0.003,lastSy=window.scrollY||0;
+  var introY=3.2,vy=0,landed=false,steamGate=0;
+
+  function tick(){
+    requestAnimationFrame(tick);
+    var dt = Math.min(clock.getDelta(),0.05);
+    time += dt;
+
+    var tg = target();
+    var k = 1-Math.exp(-dt*4),i;
+    for(i=0;i<KEYS.length;i++){cur[KEYS[i]]+=(tg[KEYS[i]]-cur[KEYS[i]])*k;}
+
+    // scroll speed shakes the tea a little
+    var sy = window.scrollY||0;
+    var vel = Math.abs(sy-lastSy)/Math.max(dt,0.001);
+    lastSy = sy;
+
+    // landing
+    if(time<0.35){introY=3.2;}
+    else if(!landed){
+      vy -= 14*dt;
+      introY += vy*dt;
+      if(introY<=0){
+        introY=0;vy=-vy*0.25;
+        amp=Math.max(amp,0.045);
+        if(Math.abs(vy)<0.4){landed=true;vy=0;}
+      }
+    }
+    if(reduce){landed=true;introY=0;}
+
+    var ampT = 0.003+Math.min(vel*0.000008,0.02);
+    amp += (ampT-amp)*(1-Math.exp(-dt*2.5));
+
+    if(!reduce){idle += dt*0.25;}
+    pxs += (px-pxs)*(1-Math.exp(-dt*3));
+    pys += (py-pys)*(1-Math.exp(-dt*3));
+
+    root.position.set(cur.x,introY+cur.y,0);
+    root.rotation.set(cur.rx,0,cur.rz);
+    root.scale.setScalar(cur.s);
+    spin.rotation.y = cur.ry+idle+pxs*0.4+introY*0.9;
+
+    camera.position.set(pxs*0.35,cur.camY-pys*0.18,cur.camZ);
+    camera.lookAt(0,cur.look,0);
+
+    key.position.set(cur.x-2.6,5.2,3.4);
+    key.target.position.set(cur.x,0.5,0);
+
+    // tea ripples
+    for(i=0;i<lp.count;i++){
+      lp.setZ(i,amp*Math.sin(lr[i]*26-time*4.2)*(0.5+lr[i]*1.6));
+    }
+    lp.needsUpdate = true;
+    liqGeo.computeVertexNormals();
+
+    // steam
+    steamGate += ((landed?1:0)-steamGate)*(1-Math.exp(-dt*1.5));
+    var speed = reduce?0.02:(0.09+Math.min(vel*0.00003,0.12));
+    for(i=0;i<puffs.length;i++){
+      var p = puffs[i];
+      p.t = (p.t+dt*speed)%1;
+      var t = p.t;
+      var sway = Math.sin(p.seed+time*0.8+t*4)*0.14*t;
+      p.s.position.set(sway,1.3+t*2.3,Math.cos(p.seed*1.3+time*0.6+t*3)*0.1*t);
+      var sc = 0.35+t*1.05;
+      p.s.scale.set(sc,sc,1);
+      p.s.material.opacity = 0.2*Math.pow(Math.sin(Math.PI*t),1.2)*steamGate;
+    }
+
+    renderer.render(scene,camera);
+  }
+  tick();
+})();
+</script>
+</body>
+</html>
